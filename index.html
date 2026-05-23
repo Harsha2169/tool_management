@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tooling Master Records Management</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Top Navigation -->
+    <header class="top-nav">
+        <div class="nav-left">
+            <div class="logo">
+                <span class="logo-icon">⚙</span>
+                <span class="logo-text">Masters</span>
+            </div>
+            <nav class="nav-links">
+                <a href="#">Enterprise</a>
+                <a href="#">Users</a>
+                <a href="#">Material</a>
+                <a href="#" class="active">Assets</a>
+            </nav>
+        </div>
+        <div class="nav-right">
+            <span class="plant-badge">Plant-1</span>
+            <span class="user-avatar">JM</span>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-icon active" title="Machinery & Tooling">🏭</div>
+            <div class="sidebar-icon" title="Orders">📋</div>
+            <div class="sidebar-icon" title="Search">🔍</div>
+            <div class="sidebar-icon" title="Reports">📊</div>
+            <div class="sidebar-icon" title="Calendar">📅</div>
+            <div class="sidebar-icon" title="Settings">⚙️</div>
+        </aside>
+
+        <!-- Content Area -->
+        <main class="content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="page-title">
+                    <h1>⚙ Machinery & Tooling</h1>
+                    <p>Workstations, Machines & Tooling Control</p>
+                </div>
+                <div class="page-actions">
+                    <button class="btn btn-export" title="Export to Excel">📥 Export</button>
+                    <button class="btn btn-primary" id="btnAddNew">+ Add New</button>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tab-bar">
+                <button class="tab" data-tab="machinery">Machinery</button>
+                <button class="tab active" data-tab="tooling">Tooling</button>
+                <button class="tab" data-tab="others">Others</button>
+            </div>
+
+            <!-- Search & Filters -->
+            <div class="filters-bar">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search by Tool ID or Description...">
+                <select id="filterToolType" class="filter-select">
+                    <option value="">All Types</option>
+                </select>
+                <select id="filterStatus" class="filter-select">
+                    <option value="">All Statuses</option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+            </div>
+
+            <!-- Tool List Table -->
+            <div class="table-container">
+                <table class="data-table" id="toolsTable">
+                    <thead>
+                        <tr>
+                            <th>Tool ID</th>
+                            <th>Tool Description</th>
+                            <th>Type of Tool</th>
+                            <th>Lifecycle Limit</th>
+                            <th>Current Usage</th>
+                        </tr>
+                    </thead>
+                    <tbody id="toolsTableBody">
+                        <!-- Populated dynamically -->
+                    </tbody>
+                </table>
+                <div class="table-empty" id="tableEmpty" style="display: none;">
+                    No tools found. Click "Add New" to create one.
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination" id="pagination">
+                <button class="btn btn-sm" id="btnPrev" disabled>&laquo; Prev</button>
+                <span id="pageInfo">Page 1</span>
+                <button class="btn btn-sm" id="btnNext">Next &raquo;</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Asset Configuration Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>⚙ Asset Configuration</h2>
+                <button class="modal-close" id="btnCloseModal">&times;</button>
+            </div>
+
+            <!-- Modal Tabs -->
+            <div class="modal-tabs">
+                <button class="modal-tab active" data-modal-tab="master">Master</button>
+                <button class="modal-tab" data-modal-tab="production">Production</button>
+                <button class="modal-tab" data-modal-tab="performance">Performance</button>
+                <button class="modal-tab" data-modal-tab="params">Params</button>
+                <button class="modal-tab" data-modal-tab="maintenance">Maintenance</button>
+            </div>
+
+            <!-- Master Tab -->
+            <div class="modal-tab-content active" id="tab-master">
+                <form id="masterForm" class="form-grid">
+                    <div class="form-group">
+                        <label>Tool Type*</label>
+                        <select id="fToolType" required>
+                            <option value="">Select Type</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Life Status*</label>
+                        <select id="fLifeStatus" required>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tool ID*</label>
+                        <input type="text" id="fToolId" required placeholder="e.g. S149">
+                    </div>
+                    <div class="form-group">
+                        <label>Tool Description*</label>
+                        <input type="text" id="fToolDesc" required placeholder="e.g. Socket Std 2PMono RAL 7035-D3">
+                    </div>
+                    <div class="form-group">
+                        <label>Make</label>
+                        <input type="text" id="fMake" placeholder="e.g. Engel Machinery EU">
+                    </div>
+                    <div class="form-group">
+                        <label>Model</label>
+                        <input type="text" id="fModel" placeholder="e.g. Victory-1">
+                    </div>
+                    <div class="form-group">
+                        <label>Tool Asset Owner*</label>
+                        <select id="fAssetOwner" required>
+                            <option value="">Select Owner</option>
+                            <option value="Client">Client</option>
+                            <option value="Inhouse">Inhouse</option>
+                            <option value="3rd Party">3rd Party</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Acquired Date</label>
+                        <input type="date" id="fAcquiredDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Lifecycle Limit*</label>
+                        <input type="number" id="fLifecycleLimit" required placeholder="e.g. 3000000">
+                    </div>
+                    <div class="form-group">
+                        <label>Control Unit*</label>
+                        <select id="fControlUnit" required>
+                            <option value="">Select Unit</option>
+                            <option value="Shots">Shots</option>
+                            <option value="Microns">Microns</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Lifecycle Initial Value</label>
+                        <input type="number" id="fInitialValue" value="0" placeholder="e.g. 20000">
+                    </div>
+                    <div class="form-group">
+                        <label>Plant ID</label>
+                        <input type="text" id="fPlantId" placeholder="e.g. Plant-1">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="btnSaveMaster">Save</button>
+                        <button type="button" class="btn btn-secondary" id="btnCancelMaster">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Production Tab -->
+            <div class="modal-tab-content" id="tab-production">
+                <div class="sub-header">
+                    <span>Production Parts</span>
+                    <button class="btn btn-sm btn-link" id="btnAddProduction">+ Add</button>
+                </div>
+                <table class="data-table sub-table" id="productionTable">
+                    <thead>
+                        <tr>
+                            <th>Tool Part Code</th>
+                            <th>Cavities</th>
+                            <th>Cavity Numbers</th>
+                            <th>Wt All Parts (g)</th>
+                            <th>Wt Runner (g)</th>
+                            <th>Wt Shot (g)</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productionTableBody"></tbody>
+                    <!-- Inline add row (hidden by default) -->
+                    <tfoot id="productionForm" style="display:none;">
+                        <tr class="form-row">
+                            <td><input type="text" id="pPartCode" placeholder="Part Code*" required></td>
+                            <td><input type="number" id="pCavities" placeholder="Cavities*" required></td>
+                            <td><input type="text" id="pCavityNums" placeholder="e.g. 1~18"></td>
+                            <td><input type="number" step="0.01" id="pWtParts" placeholder="Wt Parts"></td>
+                            <td><input type="number" step="0.01" id="pWtRunner" placeholder="Wt Runner"></td>
+                            <td><input type="number" step="0.01" id="pWtShot" placeholder="Wt Shot"></td>
+                            <td>
+                                <button class="btn btn-sm btn-save" id="btnSaveProduction">💾</button>
+                                <button class="btn btn-sm btn-cancel" id="btnCancelProduction">✖</button>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <!-- Performance Tab -->
+            <div class="modal-tab-content" id="tab-performance">
+                <div class="sub-header">
+                    <span>Performance Records</span>
+                    <button class="btn btn-sm btn-link" id="btnAddPerformance">+ Add</button>
+                </div>
+                <table class="data-table sub-table">
+                    <thead>
+                        <tr>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Performance</th>
+                            <th>Cumulative</th>
+                            <th>UoM</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="performanceTableBody"></tbody>
+                </table>
+                <div class="inline-form" id="performanceForm" style="display:none;">
+                    <input type="date" id="perfStartDate" required>
+                    <input type="date" id="perfEndDate">
+                    <input type="number" step="0.01" id="perfValue" placeholder="Performance">
+                    <input type="number" step="0.01" id="perfCumulative" placeholder="Cumulative">
+                    <select id="perfUom">
+                        <option value="Shorts">Shorts</option>
+                        <option value="Microns">Microns</option>
+                    </select>
+                    <button class="btn btn-sm btn-save" id="btnSavePerformance">💾</button>
+                    <button class="btn btn-sm btn-cancel" id="btnCancelPerformance">✖</button>
+                </div>
+            </div>
+
+            <!-- Params Tab -->
+            <div class="modal-tab-content" id="tab-params">
+                <div class="sub-header">
+                    <span>Custom Station Characteristics/Parameters</span>
+                    <button class="btn btn-sm btn-link" id="btnAddParam">+ Add</button>
+                </div>
+                <div id="paramsCardList" class="params-card-list">
+                    <!-- Params rendered as cards here -->
+                </div>
+                <div class="param-card-form" id="paramsForm" style="display:none;">
+                    <div class="param-form-grid">
+                        <div class="form-group">
+                            <label>Parameter Name</label>
+                            <input type="text" id="paramName" placeholder="e.g. Tie-bar Distance" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Parameter Value</label>
+                            <input type="text" id="paramValue" placeholder="e.g. 250" required>
+                        </div>
+                        <div class="form-group">
+                            <label>UoM</label>
+                            <select id="paramUom">
+                                <option value="">Select</option>
+                                <option value="mm">mm</option>
+                                <option value="Kg">Kg</option>
+                                <option value="cm">cm</option>
+                                <option value="m">m</option>
+                                <option value="psi">psi</option>
+                                <option value="bar">bar</option>
+                                <option value="°C">°C</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="param-form-actions">
+                        <button class="btn btn-sm btn-save" id="btnSaveParam">💾 Save</button>
+                        <button class="btn btn-sm btn-cancel" id="btnCancelParam">✖ Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Maintenance Tab -->
+            <div class="modal-tab-content" id="tab-maintenance">
+                <div class="sub-header">
+                    <span>Maintenance History</span>
+                    <button class="btn btn-sm btn-link" id="btnAddMaintenance">+ Add</button>
+                </div>
+                <table class="data-table sub-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Performed By</th>
+                            <th>Next Due</th>
+                            <th>Cost</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="maintenanceTableBody"></tbody>
+                </table>
+                <div class="inline-form" id="maintenanceForm" style="display:none;">
+                    <input type="date" id="maintDate" required>
+                    <input type="text" id="maintType" placeholder="Type">
+                    <input type="text" id="maintDesc" placeholder="Description">
+                    <input type="text" id="maintBy" placeholder="Performed By">
+                    <input type="date" id="maintNextDue">
+                    <input type="number" step="0.01" id="maintCost" placeholder="Cost">
+                    <button class="btn btn-sm btn-save" id="btnSaveMaintenance">💾</button>
+                    <button class="btn btn-sm btn-cancel" id="btnCancelMaintenance">✖</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
