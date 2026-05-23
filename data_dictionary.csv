@@ -1,0 +1,57 @@
+Table,Field,Data Type,Constraint,Nullable,Description
+tool_type_lookup,id,BIGINT,PRIMARY KEY,No,Auto-increment surrogate key
+tool_type_lookup,type_name,VARCHAR(50),UNIQUE,No,"Tool type name (Injection Mould, CNC Tooling, Die for Casting, Die for Press)"
+tool_type_lookup,is_active,BOOLEAN,DEFAULT TRUE,No,Whether type is active for selection
+tool_master,id,BIGINT,PRIMARY KEY,No,Auto-increment surrogate key
+tool_master,tool_id,VARCHAR(50),UNIQUE INDEX,No,"Business tool ID (e.g., S149, D103, S741)"
+tool_master,tool_description,VARCHAR(255),,No,"Tool description (e.g., Socket Std 2PMono RAL 7035-D3)"
+tool_master,tool_type_id,BIGINT,FOREIGN KEY → tool_type_lookup.id,No,Reference to tool type lookup
+tool_master,life_status,VARCHAR(20),DEFAULT 'Active',No,Active or Inactive
+tool_master,make,VARCHAR(100),,Yes,"Manufacturer (e.g., Engel Machinery EU)"
+tool_master,model,VARCHAR(100),,Yes,"Machine model (e.g., Victory-1)"
+tool_master,asset_owner,VARCHAR(50),,No,"Owner category (Client, Inhouse, 3rd Party)"
+tool_master,acquired_date,DATE,,Yes,Date tool was acquired
+tool_master,lifecycle_limit,BIGINT,,No,"Max lifecycle count (e.g., 3000000)"
+tool_master,control_unit,VARCHAR(50),,No,Unit of measurement for lifecycle (Shots or Microns)
+tool_master,lifecycle_initial_value,BIGINT,DEFAULT 0,No,"Starting lifecycle value (e.g., 20000)"
+tool_master,current_usage,BIGINT,DEFAULT 0,No,Current usage count
+tool_master,plant_id,VARCHAR(50),,Yes,Plant identifier
+tool_master,is_deleted,BOOLEAN,DEFAULT FALSE,No,Soft delete flag
+tool_master,created_at,TIMESTAMP WITH TZ,AUTO,No,Record creation timestamp
+tool_master,updated_at,TIMESTAMP WITH TZ,AUTO,No,Last update timestamp
+tool_production,id,BIGINT,PRIMARY KEY,No,Auto-increment surrogate key
+tool_production,tool_master_id,BIGINT,FOREIGN KEY → tool_master.id,No,Parent tool reference
+tool_production,tool_part_code,VARCHAR(50),,No,"Part code (e.g., t16340A, t16340B)"
+tool_production,cavities,INTEGER,,No,"Number of cavities (e.g., 18)"
+tool_production,cavity_numbers,VARCHAR(50),,Yes,"Cavity number range (e.g., 1-18, 19-36)"
+tool_production,weight_all_parts_g,DECIMAL(10.2),,Yes,Weight of all parts in grams
+tool_production,weight_runner_g,DECIMAL(10.2),,Yes,Runner weight in grams
+tool_production,weight_shot_g,DECIMAL(10.2),,Yes,Total shot weight in grams
+tool_production,created_at,TIMESTAMP WITH TZ,AUTO,No,Record creation timestamp
+tool_production,updated_at,TIMESTAMP WITH TZ,AUTO,No,Last update timestamp
+tool_performance,id,BIGINT,PRIMARY KEY,No,Auto-increment surrogate key
+tool_performance,tool_master_id,BIGINT,FOREIGN KEY → tool_master.id,No,Parent tool reference
+tool_performance,start_date,DATE,,No,Performance period start
+tool_performance,end_date,DATE,,Yes,Performance period end
+tool_performance,performance_value,DECIMAL(12.2),,Yes,"Performance count (e.g., 23, 576)"
+tool_performance,cumulative,DECIMAL(12.2),,Yes,Cumulative running total
+tool_performance,uom,VARCHAR(50),,No,Unit of measure (Shots/Shorts)
+tool_performance,created_at,TIMESTAMP WITH TZ,AUTO,No,Record creation timestamp
+tool_performance,updated_at,TIMESTAMP WITH TZ,AUTO,No,Last update timestamp
+tool_params,id,BIGINT,PRIMARY KEY,No,Auto-increment surrogate key
+tool_params,tool_master_id,BIGINT,FOREIGN KEY → tool_master.id,No,Parent tool reference
+tool_params,parameter_name,VARCHAR(100),,No,"Parameter label (e.g., Tie-bar Distance, Shot Volume)"
+tool_params,parameter_value,VARCHAR(100),,No,"Parameter value (e.g., 250, 0.048)"
+tool_params,uom,VARCHAR(50),,Yes,"Unit of measure (e.g., mm, Kg)"
+tool_params,created_at,TIMESTAMP WITH TZ,AUTO,No,Record creation timestamp
+tool_params,updated_at,TIMESTAMP WITH TZ,AUTO,No,Last update timestamp
+tool_maintenance,id,BIGINT,PRIMARY KEY,No,Auto-increment surrogate key
+tool_maintenance,tool_master_id,BIGINT,FOREIGN KEY → tool_master.id,No,Parent tool reference
+tool_maintenance,maintenance_date,DATE,,No,Date of maintenance
+tool_maintenance,maintenance_type,VARCHAR(50),,Yes,Preventive or Corrective
+tool_maintenance,description,TEXT,,Yes,Maintenance details
+tool_maintenance,performed_by,VARCHAR(100),,Yes,Person who performed maintenance
+tool_maintenance,next_due_date,DATE,,Yes,Next scheduled maintenance date
+tool_maintenance,cost,DECIMAL(12.2),,Yes,Maintenance cost
+tool_maintenance,created_at,TIMESTAMP WITH TZ,AUTO,No,Record creation timestamp
+tool_maintenance,updated_at,TIMESTAMP WITH TZ,AUTO,No,Last update timestamp

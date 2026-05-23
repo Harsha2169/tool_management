@@ -1,0 +1,5 @@
+# Files to exclude from ZIP
+venv/
+__pycache__/
+*.pyc
+.env
