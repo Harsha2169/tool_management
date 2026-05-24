@@ -1,5 +1,5 @@
 // ===== Configuration =====
-const API_BASE = "http://localhost:8000/api/v1";
+const API_BASE = "https://tool-management-api-h0ud.onrender.com";
 
 // ===== State =====
 let currentPage = 0;
