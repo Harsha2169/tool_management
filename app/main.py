@@ -3,7 +3,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import os
 
-from app.routers import tools, productions, performances, params, maintenances, lookups
+from app.routers import (
+    tools,
+    productions,
+    performances,
+    params,
+    maintenances,
+    lookups,
+)
 
 app = FastAPI(
     title="Tooling Master Records Management",
@@ -11,7 +18,7 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# CORS - allow frontend to call API
+# CORS Configuration
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -20,11 +27,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Serve frontend static files
-frontend_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend")
-if os.path.isdir(frontend_dir):
-    app.mount("/ui", StaticFiles(directory=frontend_dir, html=True), name="frontend")
+# Frontend Static Files
+frontend_dir = os.path.join(
+    os.path.dirname(os.path.dirname(__file__)),
+    "frontend"
+)
 
+if os.path.isdir(frontend_dir):
+    app.mount(
+        "/ui",
+        StaticFiles(directory=frontend_dir, html=True),
+        name="frontend"
+    )
+
+# API Routers
 app.include_router(tools.router)
 app.include_router(productions.router)
 app.include_router(performances.router)
@@ -32,7 +48,11 @@ app.include_router(params.router)
 app.include_router(maintenances.router)
 app.include_router(lookups.router)
 
-
+# Root Endpoint
 @app.get("/")
 def root():
-    return {"message": "Tooling Master Records Management API", "docs": "/docs", "ui": "/ui"}
+    return {
+        "message": "Tooling Master Records Management API",
+        "docs": "/docs",
+        "ui": "/ui"
+    }
